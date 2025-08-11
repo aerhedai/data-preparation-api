@@ -1,7 +1,7 @@
 from pydantic import BaseSettings
 
 class Settings(BaseSettings):
-    project_name: str = "Python API Boilerplate"
+    project_name: str = "Data Preparation API"
     debug: bool = True
 
     class Config:
