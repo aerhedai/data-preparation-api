@@ -1,149 +1,187 @@
-# Python API Boilerplate
+```markdown
+# 📦 Data Preparation API
 
-A ready-to-use, Dockerized FastAPI boilerplate for building scalable and maintainable Python APIs quickly. This boilerplate provides a modular folder structure, logging, routing, and example code to get you started with building your own APIs efficiently.
-
----
-
-## Features
-
-- ⚡ FastAPI framework with automatic docs (`/docs` and `/redoc`)
-- 🧱 Modular code organisation (routes, services, models, utils)
-- 🐳 Docker support for consistent local development and deployment
-- 📜 Logging included for easier debugging and monitoring
-- 🚀 Easily extendable for real projects
+**Version:** 1.0.0  
+**Author:** Aerhed AI
 
 ---
 
-## Directory Structure
+## 📝 Overview
+
+The **Data Preparation API** is a modular microservice for preparing datasets for downstream machine learning tasks.  
+It is built using the [Aerhed AI Python API Template](https://github.com/aerhedai/python-api-template) and includes:
+
+- **Scaling**: MinMaxScaler, StandardScaler, RobustScaler, etc.
+- **Encoding**: One-hot encoding, label encoding for categorical variables.
+- **Splitting**: Train-test split (with optional stratification).
+- **Output**: Saves processed dataset and metadata for further processing.
+
+This API is designed to integrate seamlessly with other Aerhed modular APIs in the AI dataset pipeline.
+
+---
+
+## 📂 Project Structure
 
 ```
-.
+data-preparation-api/
 ├── app/
-│   ├── api/
-│   │   └── routes.py           # API route definitions
+│   ├── __init__.py
+│   ├── main.py                 # FastAPI entry point
+│   ├── routes/
+│   │   ├── __init__.py
+│   │   └── prepare.py           # API route definitions
 │   ├── services/
-│   │   └── example.py          # Business logic/services
+│   │   ├── __init__.py
+│   │   └── preparation_service.py  # Core preparation logic
 │   ├── models/
-│   │   └── example_schema.py   # Pydantic models for validation
-│   ├── core/
-│   │   └── config.py           # Pydantic config for setup
+│   │   ├── __init__.py
+│   │   └── preparation_request.py  # Pydantic models for requests
 │   ├── utils/
-│   │   └── logging.py          # Logger setup
-│   ├── main.py                 # FastAPI app setup and route inclusion
+│   │   ├── __init__.py
+│   │   └── file_handler.py      # File loading/saving helpers
 ├── tests/
-│   └── test_example.py         # Example unit tests
-├── Dockerfile                  # Docker configuration
-├── requirements.txt            # Python dependencies
-├── README.md                   # Project readme
-├── .gitignore                  # Ignore rules
-├── LICENSE                     # Distribution and Usage License
-├── .env.example                # Environmental variable examples
-├── CHANGELOG.md                # API boilerplate changelog
+│   ├── __init__.py
+│   └── test_preparation.py      # Unit tests
+├── Dockerfile
+├── requirements.txt
+├── .env.example
+├── README.md
+└── start.sh
 ```
 
 ---
 
-## Getting Started
+## 🚀 Features
 
-### 🔧 Prerequisites
-
-- Docker installed on your machine
-- (Optional) Python 3.9+ if not using Docker
-
-### 🚀 Running with Docker
-
-1. Build the image:
-   ```bash
-   docker build -t api-boilerplate .
-   ```
-
-2. Run the container:
-   ```bash
-   docker run -p 8000:8080 api-boilerplate
-   ```
-
-3. Access your API:
-   - API base: http://localhost:8000
-   - Swagger UI: http://localhost:8000/docs
-   - ReDoc: http://localhost:8000/redoc
+- 📤 **Upload** dataset in CSV/Excel format (via shared volume or API call).
+- 🛠 **Clean & transform**:
+  - Encode categorical features
+  - Scale numerical features
+  - Handle missing values
+- ✂ **Split** into training/testing sets
+- 📦 **Save outputs** for downstream APIs
 
 ---
 
-### 🧪 Running Locally (without Docker)
+## ⚙️ Installation & Setup
 
-1. Create and activate a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate        # macOS/Linux
-   venv\Scripts\activate           # Windows
-   ```
+### 1️⃣ Clone the repository
 
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. Run the app:
-   ```bash
-   uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-   ```
-
----
-
-## 🛠️ Extending the Boilerplate
-
-- **Add Routes:**  
-  Define new endpoints in `app/api/` and register them via the router.
-
-- **Add Services:**  
-  Place logic in `app/services/` and call from your routes.
-
-- **Define Models:**  
-  Use Pydantic in `app/models/` for request/response validation.
-
-- **Utilities:**  
-  Add helpers/loggers in `app/utils/`.
-
-- **Tests:**  
-  Write unit and integration tests in `tests/`.
-
-- **Environment Configs (optional):**  
-  Use `python-dotenv` or other tools for managing environment variables.
-
----
-
-## ✅ Notes
-
-- Docker exposes port 8080 (internal) as 8000 (host).
-- Modify the Dockerfile or FastAPI config if you want different ports.
-- Structure is suitable for scaling: you can add auth, DB, caching, etc.
-
----
-
-## 🧪 Example Endpoint
-
-Try:
-```
-GET http://localhost:8000/example
+```bash
+git clone https://github.com/aerhedai/data-preparation-api.git
+cd data-preparation-api
 ```
 
-Response:
+### 2️⃣ Create virtual environment
+
+```bash
+python -m venv venv
+source venv/bin/activate   # Mac/Linux
+venv\Scripts\activate      # Windows
+```
+
+### 3️⃣ Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4️⃣ Environment Variables
+
+Copy `.env.example` to `.env` and update values if necessary:
+
+```bash
+cp .env.example .env
+```
+
+Example `.env`:
+
+```
+HOST=0.0.0.0
+PORT=8000
+UPLOAD_DIR=uploaded_files
+OUTPUT_DIR=prepared_files
+```
+
+---
+
+## ▶️ Running the API
+
+### Locally
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+### Docker
+```bash
+docker build -t data-preparation-api .
+docker run -p 8000:8000 data-preparation-api
+```
+
+### Docker Compose
+If integrating with other APIs:
+```bash
+docker-compose up --build
+```
+
+---
+
+## 📡 API Endpoints
+
+### **POST** `/prepare`
+Prepares a dataset for ML.
+
+**Request:**
 ```json
 {
-  "message": "Hello from the example service!"
+  "file_path": "uploaded_files/my_dataset.csv",
+  "target_column": "price",
+  "scaling": "standard",
+  "encoding": "onehot",
+  "test_size": 0.2,
+  "stratify": true
+}
+```
+
+**Response:**
+```json
+{
+  "train_file": "prepared_files/train.csv",
+  "test_file": "prepared_files/test.csv",
+  "scaler": "StandardScaler",
+  "encoder": "OneHotEncoder"
 }
 ```
 
 ---
 
-## 🧾 License
+## 🧪 Testing
 
-MIT License. Feel free to use and modify.
+Run unit tests with:
+
+```bash
+pytest
+```
+
+---
+
+## 🛠 Development Notes
+
+- **Preparation logic** lives in `app/services/preparation_service.py`
+- **Request validation** in `app/models/preparation_request.py`
+- **File handling** in `app/utils/file_handler.py`
+- **Routes** in `app/routes/prepare.py`
 
 ---
 
-## 🙌 Contributing
+## 🔗 Related APIs
 
-Pull requests welcome! Open an issue for feature requests or bugs.
+- [`dataset-uploader-api`](https://github.com/aerhedai/dataset-uploader-api)
+- [`data-profiler-api`](https://github.com/aerhedai/data-profiler-api)
+- [`data-cleaner-api`](https://github.com/aerhedai/data-cleaner-api)
 
 ---
+
+## 📜 License
+MIT License – see [LICENSE](LICENSE) for details.
+```
