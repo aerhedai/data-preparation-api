@@ -1,20 +1,8 @@
 import logging
-import sys
 
-def setup_logger(name: str = "app") -> logging.Logger:
-    """
-    Returns a logger instance with a consistent format and level.
-    """
-    formatter = logging.Formatter(
-        "[%(asctime)s] [%(levelname)s] [%(name)s]: %(message)s", "%Y-%m-%d %H:%M:%S"
+def get_logger(name: str):
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     )
-
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setFormatter(formatter)
-
-    logger = logging.getLogger(name)
-    logger.setLevel(logging.DEBUG)  # Change to logging.INFO in production
-    logger.addHandler(handler)
-    logger.propagate = False  # Avoid duplicate logs
-
-    return logger
+    return logging.getLogger(name)
